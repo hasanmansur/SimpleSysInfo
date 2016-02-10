@@ -3,7 +3,8 @@ var wss = new WebSocketServer({ port: 8080 });
 
 wss.on('connection', function connection(ws) {
     console.log('Connection open');
-    ws.on('message', function incoming(message) {
+	//'message' listener
+    ws.on('message', function message(message) {
         switch(message){
             case 'ready':
                 console.log('client: ' + message);
@@ -12,14 +13,15 @@ wss.on('connection', function connection(ws) {
                 console.log('received: ' + message);
                 break;
         }     
-        console.log('received: %s', message);
     });
+	//'close' listener
     ws.on('close', function close(code, msg){
         console.log('conneciton closed with code' + code);
     });
     ws.send('ready');
 });
 
+//'SIGINT' listener
 process.on('SIGINT', function(){
     wss.close();
 });
