@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <script>
+      var ws = new WebSocket('ws://' + 'localhost' + ':8080');
+      ws.onmessage = function (event) {
+        console.log(event);
+      };
+    </script>
+  </head>
+  <body>
+    <strong>Server Stats</strong><br>
+    memory: <div id='mem'></div><br>
+  </body>
+</html>
