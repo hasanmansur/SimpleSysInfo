@@ -1,14 +1,18 @@
 <html>
   <head>
     <script>
-      var ws = new WebSocket('ws://' + 'localhost' + ':8080');
+      var random  = Math.random().toString();
+      var ws = new WebSocket('ws://' + 'localhost' + ':8080/' + random);
+      ws.onopen = function (event) {
+        console.log('Connection open');
+        ws.send('browser ready');
+      };
       ws.onmessage = function (event) {
-        console.log(event);
+        console.log(event.data);
       };
     </script>
   </head>
   <body>
-    <strong>Server Stats</strong><br>
-    memory: <div id='mem'></div><br>
+   real time data will be presented here.
   </body>
 </html>
