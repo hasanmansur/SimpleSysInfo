@@ -1,17 +1,6 @@
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({ port: 8080 });
 
-//redis client
-var redis = require('redis');
-var client = redis.createClient();
-
-client.on('connect', function() {
-    console.log('my server gets connected to redis server');
-});
-
-
-//redis client
-
 var browserClients = new Object();
 
 //'connection' listener
@@ -20,11 +9,6 @@ wss.on('connection', function connection(ws) {
     if(ws.upgradeReq.url.substr(1)){
         var key = ws.upgradeReq.url.substr(1);
         browserClients[key] = ws;
-		console.log(key);
-		client.hmset(key, ws);
-		client.hgetall(key, function(err, object) {
-			console.log(object);
-		});
     }
 	//'message' listener
     ws.on('message', function message(message) {
