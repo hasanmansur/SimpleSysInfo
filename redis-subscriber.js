@@ -42,21 +42,12 @@ subscriber.on("message", function (channel, message) {
 	console.log(message);
 	console.log("-----------------------------------------------");
 	//send it to WS server
-	ws.send(message, function (error) {
-	    console.log(error);
-	    ws = new WebSocket('ws://localhost:8080');
-	    ws.on('error', function error(e){
-            console.log("error connecting WS server");
-	        console.log(e);
-        });
-            ws.on('open', function open(){
-                console.log("connection open to WS server");
-            });
-
-            ws.on('close', function close(code, msg){
-                console.log('connection to WS server closed with code:' + code);
-            });
-	});
+	try {
+		ws.send(message);
+	}
+	catch (e) {
+		console.log(e);
+	}
 });
 
 /**
@@ -76,6 +67,7 @@ var ws = new WebSocket('ws://localhost:8080');
 ws.on('error', function error(e){
     console.log("error connecting WS server");
 	console.log(e);
+	ws = new WebSocket('ws://localhost:8080');
 });
 
 ws.on('open', function open(){
