@@ -4,8 +4,10 @@
 var redis = require("redis");
 var subscriber = redis.createClient();
 
+
+
 /**
-* Connection events listener
+* Redis connection events listener
 */
 subscriber.on("ready", function () {
 	console.log("subscriber is ready");
@@ -24,11 +26,11 @@ subscriber.on("reconnecting", function (r) {
 });
 
 subscriber.on("end", function () {
-	console.log("Server connection has closed");
+	console.log("redis server connection has closed");
 });
 
 /**
-* Subscribe events listener
+* Redis subscribe events listener
 */
 subscriber.on("subscribe", function (channel, count) {
 	console.log("subscribes to channel: " + channel);
@@ -37,13 +39,49 @@ subscriber.on("subscribe", function (channel, count) {
 
 subscriber.on("message", function (channel, message) {
 	console.log("-----------------------------------------------");
-	console.log("Channel: " + channel);
-	console.log("msg:" + message);
+	console.log(message);
 	console.log("-----------------------------------------------");
-	subscriber.publish("another", "got u");
+	//send it to WS server
+	ws.send(message, function (error) {
+	    console.log(error);
+	    ws = new WebSocket('ws://localhost:8080');
+	    ws.on('error', function error(e){
+            console.log("error connecting WS server");
+	        console.log(e);
+        });
+            ws.on('open', function open(){
+                console.log("connection open to WS server");
+            });
+
+            ws.on('close', function close(code, msg){
+                console.log('connection to WS server closed with code:' + code);
+            });
+	});
 });
 
 /**
-* Channel subscription
+* Redis channel subscription
 */
 subscriber.subscribe("test_channel");
+
+/**
+* WS client
+*/
+var WebSocket = require('ws');
+var ws = new WebSocket('ws://localhost:8080');
+
+/**
+* WS events listener
+*/
+ws.on('error', function error(e){
+    console.log("error connecting WS server");
+	console.log(e);
+});
+
+ws.on('open', function open(){
+    console.log("connection open to WS server");
+});
+
+ws.on('close', function close(code, msg){
+    console.log('connection to WS server closed with code:' + code);
+});

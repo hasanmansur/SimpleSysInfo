@@ -4,11 +4,17 @@
 var redis = require("redis");
 var publisher = redis.createClient();
 
+var os = require('os');
+var message;
+
 /**
-* Connection events listener
+* Redis connection events listener
 */
 publisher.on("ready", function () {
 	console.log("publisher is ready");
+	setInterval(function () {
+	    publisher.publish("test_channel", "Host: " + os.hostname() + ", Free memory: " + os.freemem());
+	}, 5000);
 });
 
 publisher.on("connect", function () {
@@ -24,16 +30,8 @@ publisher.on("reconnecting", function (r) {
 });
 
 publisher.on("end", function () {
-	console.log("Server connection has closed");
+	console.log("redis server connection has closed");
 });
 
-if (process.argv[2]) {
-    publisher.publish("test_channel", process.argv[2]);        
-}
-else {
-    console.log("argument missing, plz provide a random username");
-    publisher.end();
-    process.exit();
-}
 
-publisher.subscribe("another");
+
