@@ -9,6 +9,7 @@ wss.on('connection', function connection(ws) {
         console.log("-----------------------------------------------");
 	    console.log(message);
 	    console.log("-----------------------------------------------");
+		ws.send("resending" + message);
         });
 	//'close' listener
     ws.on('close', function close(code, msg) {

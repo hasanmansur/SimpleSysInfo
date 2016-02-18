@@ -1,24 +1,36 @@
 var WebSocket = require('ws');
-var ws = new WebSocket('ws://localhost:8080');
+var ws;
+var interval;
 
-//'error' listener
-ws.on('error', function error(e){
-	console.log(e);
-});
+/**
+* Connect() - connects ws clients to ws server
+*/
+var connect = function () { 
+    console.log("ws client trying to connect to ws server ... ");  
+    ws = new WebSocket('ws://localhost:8080');
+    /**
+    * WS events listener
+    */
+    ws.on('error', function error(e){
+        console.log("error: ws client connecting ws server");
+		connect();	
+    });
 
-//'open' listener
-ws.on('open', function open(){
-    console.log("Connection open");
-});
+    ws.on('open', function open(){
+        console.log("ws client - ws server connection open");
+    });
 
-//'message' listener
-ws.on('message', function message(data, flags){
-    
-});
+    ws.on('close', function close(code, msg){
+        console.log("ws client - ws server connection closed with code:" + code);
+		connect();
+    });
 
-//'close' listener
-ws.on('close', function close(code, msg){
-    console.log('connection closed with code:' + code);
-});
+	ws.on('message', function message(data, flags){
+		console.log("-----------------------------------------------");
+		console.log(data);
+		console.log("-----------------------------------------------");
+	});
+}
 
+connect();
 
