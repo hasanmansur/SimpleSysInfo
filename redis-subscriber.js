@@ -4,7 +4,11 @@
 var redis = require("redis");
 var subscriber = redis.createClient();
 
-
+/**
+* WS client
+*/
+var WebSocket = require('ws');
+var ws;
 
 /**
 * Redis connection events listener
@@ -18,11 +22,11 @@ subscriber.on("connect", function () {
 });
 
 subscriber.on("error", function (e) {
-	console.log(e);
+	console.log("error: subscriber connecting redis server");
 });
 
 subscriber.on("reconnecting", function (r) {
-	console.log("Trying to reconnect..." + " Attempt#" + r.attempt + ", Delay: " + r.delay + "ms");
+	console.log("trying to reconnect to redis server ..." + " Attempt#" + r.attempt + ", Delay: " + r.delay + "ms");
 });
 
 subscriber.on("end", function () {
@@ -46,7 +50,8 @@ subscriber.on("message", function (channel, message) {
 		ws.send(message);
 	}
 	catch (e) {
-		console.log(e);
+		console.log("failed to send data to ws server" + " - " + e);
+		connect();
 	}
 });
 
@@ -55,25 +60,29 @@ subscriber.on("message", function (channel, message) {
 */
 subscriber.subscribe("test_channel");
 
-/**
-* WS client
-*/
-var WebSocket = require('ws');
-var ws = new WebSocket('ws://localhost:8080');
 
 /**
-* WS events listener
+* Connect() - connects redis subscriber to ws server
 */
-ws.on('error', function error(e){
-    console.log("error connecting WS server");
-	console.log(e);
-	ws = new WebSocket('ws://localhost:8080');
-});
+var connect = function () { 
+    console.log("subscriber trying to connect to ws server ... ");  
+    ws = new WebSocket('ws://localhost:8080');
+    /**
+    * WS events listener
+    */
+    ws.on('error', function error(e){
+        console.log("error: subscriber connecting ws server");
+    });
 
-ws.on('open', function open(){
-    console.log("connection open to WS server");
-});
+    ws.on('open', function open(){
+        console.log("subscriber - ws server connection open");
+    });
 
-ws.on('close', function close(code, msg){
-    console.log('connection to WS server closed with code:' + code);
-});
+    ws.on('close', function close(code, msg){
+        console.log("subscriber - ws server connection closed with code:" + code);
+    });
+}
+
+connect();
+
+

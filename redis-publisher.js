@@ -22,11 +22,11 @@ publisher.on("connect", function () {
 });
 
 publisher.on("error", function (e) {
-	console.log(e);
+	console.log("error: publisher connecting redis server");
 });
 
 publisher.on("reconnecting", function (r) {
-	console.log("Trying to reconnect..." + " Attempt#" + r.attempt + ", Delay: " + r.delay + "ms");
+	console.log("trying to reconnect to redis server ..." + " Attempt#" + r.attempt + ", Delay: " + r.delay + "ms");
 });
 
 publisher.on("end", function () {
