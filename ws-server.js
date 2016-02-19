@@ -8,6 +8,7 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function message(message) {
         console.log("-----------------------------------------------");
 	    console.log(message);
+		wss.broadcast(message);
 	    console.log("-----------------------------------------------");
         });
 	//'close' listener
@@ -19,3 +20,9 @@ wss.on('connection', function connection(ws) {
 		console.log(e);
 	});
 });
+
+wss.broadcast = function (data) {
+	wss.clients.forEach(function (client) {
+		client.send(data);
+	});
+}
