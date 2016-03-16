@@ -1,0 +1,1 @@
+var gulp=require("gulp"),uglify=require("gulp-uglify");gulp.task("js-compress",function(){console.log("need to do js compress"),gulp.src("*.js").pipe(uglify()).pipe(gulp.dest("dist/"))}),gulp.task("default",["js-compress"],function(){console.log("this is the default task")});
